@@ -28,11 +28,11 @@ export function usePuzzleState() {
     const [showView, setShowView] = useState(false)
 
     // Calcula dimensiones actuales
-    const width = gridWidth * cellSize;
-    const height = gridHeight * cellSize;
+    const width = gridWidth * cellSize
+    const height = gridHeight * cellSize
     // Si no hay valor, usa el default relativo al tamaño
-    const computedOriginX = originX === null ? width / 2 : originX;
-    const computedOriginY = originY === null ? height * 0.75 : originY;
+    const computedOriginX = originX === null ? width / 2 : originX
+    const computedOriginY = originY === null ? height * 0.75 : originY
 
     return {
         // Parámetros del puzzle

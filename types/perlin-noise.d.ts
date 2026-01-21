@@ -1,1 +1,1 @@
-declare module '@chriscourses/perlin-noise';
+declare module "@chriscourses/perlin-noise"

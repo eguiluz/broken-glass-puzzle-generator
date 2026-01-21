@@ -33,9 +33,10 @@ export default function AyudaPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <p>
-                            Los puzzles efecto cristal roto son composiciones generadas mediante celdas Voronoi radiales y bordes orgánicos, simulando el aspecto de un vidrio fracturado. Este
-                            generador crea puzzles únicos donde cada pieza tiene una forma diferente, perfectos para
-                            cortar con láser en madera, acrílico o cartón.
+                            Los puzzles efecto cristal roto son composiciones generadas mediante celdas Voronoi radiales
+                            y bordes orgánicos, simulando el aspecto de un vidrio fracturado. Este generador crea
+                            puzzles únicos donde cada pieza tiene una forma diferente, perfectos para cortar con láser
+                            en madera, acrílico o cartón.
                         </p>
                         <p>
                             Puedes personalizar completamente tu puzzle: desde la forma base hasta los textos y texturas
