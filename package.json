@@ -1,0 +1,49 @@
+{
+    "name": "broken-glass-puzzle-generator",
+    "version": "0.1.0",
+    "description": "Generador de puzzles efecto cristal roto personalizable con soporte para corte láser. Crea piezas únicas con formas orgánicas, texturas grabables, texto/emojis personalizados y exportación a SVG optimizado para máquinas láser.",
+    "private": true,
+    "scripts": {
+        "build": "next build",
+        "dev": "next dev",
+        "lint": "eslint .",
+        "start": "next start",
+        "format": "prettier --write .",
+        "format:check": "prettier --check ."
+    },
+    "dependencies": {
+        "@chriscourses/perlin-noise": "^1.0.6",
+        "@radix-ui/react-collapsible": "1.1.2",
+        "@radix-ui/react-label": "2.1.1",
+        "@radix-ui/react-select": "2.1.4",
+        "@radix-ui/react-slider": "1.2.2",
+        "@radix-ui/react-slot": "1.1.1",
+        "@radix-ui/react-switch": "1.1.2",
+        "autoprefixer": "^10.4.20",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "d3-delaunay": "^6.0.4",
+        "lucide-react": "^0.454.0",
+        "next": "16.0.10",
+        "react": "19.2.0",
+        "react-dom": "19.2.0",
+        "simplex-noise": "^4.0.3",
+        "tailwind-merge": "^3.3.1",
+        "tailwindcss-animate": "^1.0.7"
+    },
+    "devDependencies": {
+        "@ducanh2912/next-pwa": "^10.2.9",
+        "@tailwindcss/postcss": "^4.1.9",
+        "@types/d3-delaunay": "^6.0.4",
+        "@types/node": "^22",
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
+        "eslint": "^9.39.2",
+        "eslint-config-next": "^16.1.2",
+        "postcss": "^8.5",
+        "prettier": "^3.8.0",
+        "tailwindcss": "^4.1.9",
+        "tw-animate-css": "1.3.3",
+        "typescript": "^5"
+    }
+}
