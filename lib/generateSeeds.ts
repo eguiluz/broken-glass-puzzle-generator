@@ -13,6 +13,22 @@ export interface GenerateSeedsOptions {
     jitterAngle?: number // máximo desplazamiento angular (radianes)
 }
 
+
+// Cache global para los jitter de semillas
+const _seedJitterCache = new Map<string, { jitterR: number; jitterA: number }>()
+
+function getSeedJitter(key: string): { jitterR: number; jitterA: number } {
+    let cached = _seedJitterCache.get(key)
+    if (!cached) {
+        cached = {
+            jitterR: Math.random() * 2 - 1,
+            jitterA: Math.random() * 2 - 1,
+        }
+        _seedJitterCache.set(key, cached)
+    }
+    return cached
+}
+
 export function generateSeeds(
     rings: number[],
     angles: number[],
@@ -23,11 +39,15 @@ export function generateSeeds(
 ): Seed[] {
     const { jitterRadius = 0, jitterAngle = 0 } = options
     const seeds: Seed[] = []
-    for (const r0 of rings) {
-        for (const angle0 of angles) {
-            // Jitter aleatorio
-            const jitterR = (Math.random() * 2 - 1) * jitterRadius
-            const jitterA = (Math.random() * 2 - 1) * jitterAngle
+    for (let ringIdx = 0; ringIdx < rings.length; ringIdx++) {
+        const r0 = rings[ringIdx]
+        for (let angleIdx = 0; angleIdx < angles.length; angleIdx++) {
+            const angle0 = angles[angleIdx]
+            // Cachear jitter por posición única
+            const key = `${r0},${angle0}`
+            const { jitterR: randR, jitterA: randA } = getSeedJitter(key)
+            const jitterR = randR * jitterRadius
+            const jitterA = randA * jitterAngle
             const r = r0 + jitterR
             const angle = angle0 + jitterA
             const x = originX + r * Math.cos(angle)
