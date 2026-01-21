@@ -2,24 +2,29 @@
 
 import React, { useCallback } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
-import { Download, RefreshCw, Grid3X3 } from "lucide-react"
+import { Grid3X3 } from "lucide-react"
+import { ActionButtons } from "@/components/ActionButtons"
 import { usePuzzleState } from "@/hooks/usePuzzleState"
 import { usePuzzleGenerator } from "@/hooks/usePuzzleGenerator"
 import { generateAngles } from "@/lib/generateAngles"
 import { generateRings } from "@/lib/generateRings"
 import { generateSeeds } from "@/lib/generateSeeds"
 import { computeVoronoi } from "@/lib/computeVoronoi"
-import { getPerturbedEdge, clearEdgeCache } from "@/lib/reconstructEdge"
+import { getPerturbedEdge } from "@/lib/reconstructEdge"
 import { generateEdgeTab } from "@/lib/generateEdgeTab"
 import { downloadSVGFile, generatePuzzleFilename } from "@/lib/svgDownload"
 import { CollapsibleCard } from "@/components/CollapsibleCard"
+import { LaserParamsSection } from "@/components/LaserParamsSection"
+import { PuzzleParamsSection } from "@/components/PuzzleParamsSection"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import Link from "next/link"
 import { HelpCircle } from "lucide-react"
-import { PreviewCard } from "./PreviewCard"
+import { PreviewCard } from "@/components/PreviewCard"
+import { RadialSegmentationSection } from "@/components/RadialSegmentationSection"
+import { EdgeNoiseSection } from "@/components/EdgeNoiseSection"
+import { TabsSection } from "@/components/TabsSection"
 
 /**
  * Componente principal del generador de puzzles efecto cristal roto
@@ -32,7 +37,7 @@ export function PuzzleGenerator() {
     const [tabHeight, setTabHeight] = React.useState(0.15)
     const [tabAngle, setTabAngle] = React.useState(-30)
     // Aleatoriedad en la posición de la pestaña (0 = centro, 1 = totalmente aleatorio)
-    const [tabPositionJitter, setTabPositionJitter] = React.useState(.5)
+    const [tabPositionJitter, setTabPositionJitter] = React.useState(0.5)
     // Toggle para marcar visualmente las pestañas
     const [highlightTabs, setHighlightTabs] = React.useState(false)
     // ...
@@ -410,228 +415,46 @@ export function PuzzleGenerator() {
                 <div className="order-1 space-y-4 h-full overflow-y-auto pr-2">
                     <PuzzleParamsSection state={state} />
                     <LaserParamsSection state={state} />
-                    {/* Controles de segmentación radial */}
-                    <CollapsibleCard title="Segmentación Radial" open={true} onOpenChange={() => {}}>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <Label>Nº ángulos</Label>
-                                <span className="text-sm font-medium">{angleCount}</span>
-                            </div>
-                            <Slider
-                                value={[angleCount]}
-                                onValueChange={([v]) => setAngleCount(v)}
-                                min={6}
-                                max={48}
-                                step={1}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <Label>Nº anillos</Label>
-                                <span className="text-sm font-medium">{ringCount}</span>
-                            </div>
-                            <Slider
-                                value={[ringCount]}
-                                onValueChange={([v]) => setRingCount(v)}
-                                min={2}
-                                max={12}
-                                step={1}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <Label>Radio primer anillo</Label>
-                                <span className="text-sm font-medium">{(minRadiusPct * 100).toFixed(1)}%</span>
-                            </div>
-                            <Slider
-                                value={[minRadiusPct]}
-                                onValueChange={([v]) => setMinRadiusPct(v)}
-                                min={0.05}
-                                max={0.4}
-                                step={0.005}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <Label>Crecimiento geométrico</Label>
-                                <span className="text-sm font-medium">{growthFactor.toFixed(2)}x</span>
-                            </div>
-                            <Slider
-                                value={[growthFactor]}
-                                onValueChange={([v]) => setGrowthFactor(v)}
-                                min={1}
-                                max={2}
-                                step={0.01}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <Label>Jitter radio</Label>
-                                <span className="text-sm font-medium">{(jitterRadius * 100).toFixed(1)}%</span>
-                            </div>
-                            <Slider
-                                value={[jitterRadius]}
-                                onValueChange={([v]) => setJitterRadius(v)}
-                                min={0}
-                                max={0.1}
-                                step={0.001}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <Label>Jitter ángulo</Label>
-                                <span className="text-sm font-medium">
-                                    {((jitterAngle * 180) / Math.PI).toFixed(1)}°
-                                </span>
-                            </div>
-                            <Slider
-                                value={[jitterAngle]}
-                                onValueChange={([v]) => setJitterAngle(v)}
-                                min={0}
-                                max={Math.PI / 8}
-                                step={0.001}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <Label>Sesgo radial</Label>
-                                <span className="text-sm font-medium">{biasScalar.toFixed(2)}x</span>
-                            </div>
-                            <Slider
-                                value={[biasScalar]}
-                                onValueChange={([v]) => setBiasScalar(v)}
-                                min={0.5}
-                                max={2}
-                                step={0.01}
-                            />
-                        </div>
-                    </CollapsibleCard>
-                    <CollapsibleCard title="Ruido de Bordes" open={true} onOpenChange={() => {}}>
-                        <div className="space-y-2">
-                            <div className="flex items-center gap-2 mb-2">
-                                <input
-                                    type="checkbox"
-                                    id="noiseEnabled"
-                                    checked={noiseEnabled}
-                                    onChange={(e) => setNoiseEnabled(e.target.checked)}
-                                />
-                                <Label htmlFor="noiseEnabled">Activar ruido en bordes</Label>
-                            </div>
-                            <div className="flex justify-between">
-                                <Label>Subdivisiones</Label>
-                                <span className="text-sm font-medium">{edgeSegments}</span>
-                            </div>
-                            <Slider
-                                value={[edgeSegments]}
-                                onValueChange={([v]) => setEdgeSegments(v)}
-                                min={2}
-                                max={24}
-                                step={1}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <Label>Amplitud</Label>
-                                <span className="text-sm font-medium">{edgeAmplitude.toFixed(1)}mm</span>
-                            </div>
-                            <Slider
-                                value={[edgeAmplitude]}
-                                onValueChange={([v]) => setEdgeAmplitude(v)}
-                                min={0}
-                                max={10}
-                                step={0.1}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <Label>Frecuencia</Label>
-                                <span className="text-sm font-medium">{edgeFrequency.toFixed(3)}</span>
-                            </div>
-                            <Slider
-                                value={[edgeFrequency]}
-                                onValueChange={([v]) => setEdgeFrequency(v)}
-                                min={0.01}
-                                max={0.2}
-                                step={0.001}
-                            />
-                        </div>
-                    </CollapsibleCard>
-                    <CollapsibleCard title="Pestañas (tabs)" open={true} onOpenChange={() => {}}>
-                        <div className="space-y-2">
-                            <div className="flex items-center gap-2 mb-2">
-                                <input
-                                    type="checkbox"
-                                    id="highlightTabs"
-                                    checked={highlightTabs}
-                                    onChange={(e) => setHighlightTabs(e.target.checked)}
-                                />
-                                <Label htmlFor="highlightTabs">Marcar visualmente pestañas</Label>
-                            </div>
-                            <div className="flex justify-between">
-                                <Label>Tamaño mínimo (mm)</Label>
-                                <span className="text-sm font-medium">{minTabSize}</span>
-                            </div>
-                            <Slider
-                                value={[minTabSize]}
-                                onValueChange={([v]) => setMinTabSize(v)}
-                                min={0.5}
-                                max={20}
-                                step={0.1}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <Label>Ancho relativo</Label>
-                                <span className="text-sm font-medium">{tabWidth.toFixed(2)}</span>
-                            </div>
-                            <Slider
-                                value={[tabWidth]}
-                                onValueChange={([v]) => setTabWidth(v)}
-                                min={0.1}
-                                max={0.7}
-                                step={0.01}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <Label>Alto relativo</Label>
-                                <span className="text-sm font-medium">{tabHeight.toFixed(2)}</span>
-                            </div>
-                            <Slider
-                                value={[tabHeight]}
-                                onValueChange={([v]) => setTabHeight(v)}
-                                min={0.1}
-                                max={0.7}
-                                step={0.01}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <Label>Ángulo (°)</Label>
-                                <span className="text-sm font-medium">{tabAngle}°</span>
-                            </div>
-                            <Slider
-                                value={[tabAngle]}
-                                onValueChange={([v]) => setTabAngle(v)}
-                                min={-45}
-                                max={45}
-                                step={1}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <Label>Jitter posición pestaña</Label>
-                                <span className="text-sm font-medium">{(tabPositionJitter * 100).toFixed(0)}%</span>
-                            </div>
-                            <Slider
-                                value={[tabPositionJitter]}
-                                onValueChange={([v]) => setTabPositionJitter(v)}
-                                min={0}
-                                max={1}
-                                step={0.01}
-                            />
-                        </div>
-                    </CollapsibleCard>
+                    <RadialSegmentationSection
+                        angleCount={angleCount}
+                        setAngleCount={setAngleCount}
+                        ringCount={ringCount}
+                        setRingCount={setRingCount}
+                        minRadiusPct={minRadiusPct}
+                        setMinRadiusPct={setMinRadiusPct}
+                        growthFactor={growthFactor}
+                        setGrowthFactor={setGrowthFactor}
+                        jitterRadius={jitterRadius}
+                        setJitterRadius={setJitterRadius}
+                        jitterAngle={jitterAngle}
+                        setJitterAngle={setJitterAngle}
+                        biasScalar={biasScalar}
+                        setBiasScalar={setBiasScalar}
+                    />
+                    <EdgeNoiseSection
+                        noiseEnabled={noiseEnabled}
+                        setNoiseEnabled={setNoiseEnabled}
+                        edgeSegments={edgeSegments}
+                        setEdgeSegments={setEdgeSegments}
+                        edgeAmplitude={edgeAmplitude}
+                        setEdgeAmplitude={setEdgeAmplitude}
+                        edgeFrequency={edgeFrequency}
+                        setEdgeFrequency={setEdgeFrequency}
+                    />
+                    <TabsSection
+                        highlightTabs={highlightTabs}
+                        setHighlightTabs={setHighlightTabs}
+                        minTabSize={minTabSize}
+                        setMinTabSize={setMinTabSize}
+                        tabWidth={tabWidth}
+                        setTabWidth={setTabWidth}
+                        tabHeight={tabHeight}
+                        setTabHeight={setTabHeight}
+                        tabAngle={tabAngle}
+                        setTabAngle={setTabAngle}
+                        tabPositionJitter={tabPositionJitter}
+                        setTabPositionJitter={setTabPositionJitter}
+                    />
                     <ActionButtons regenerate={regenerate} downloadSVG={downloadSVG} />
                 </div>
 
@@ -657,112 +480,6 @@ export function PuzzleGenerator() {
                     highlightTabs={highlightTabs}
                 />
             </div>
-        </div>
-    )
-}
-
-// Secciones de configuración
-function PuzzleParamsSection({ state }: { state: ReturnType<typeof usePuzzleState> }) {
-    return (
-        <CollapsibleCard
-            title="Parámetros del puzzle"
-            open={state.showPuzzleParams}
-            onOpenChange={state.setShowPuzzleParams}
-        >
-            <div className="space-y-2">
-                <div className="flex justify-between">
-                    <Label>Ancho: {state.gridWidth} celdas</Label>
-                    <span className="text-sm text-muted-foreground">{state.gridWidth * state.cellSize}mm</span>
-                </div>
-                <Slider
-                    value={[state.gridWidth]}
-                    onValueChange={([v]) => state.setGridWidth(v)}
-                    min={5}
-                    max={30}
-                    step={1}
-                />
-            </div>
-            <div className="space-y-2">
-                <div className="flex justify-between">
-                    <Label>Alto: {state.gridHeight} celdas</Label>
-                    <span className="text-sm text-muted-foreground">{state.gridHeight * state.cellSize}mm</span>
-                </div>
-                <Slider
-                    value={[state.gridHeight]}
-                    onValueChange={([v]) => state.setGridHeight(v)}
-                    min={5}
-                    max={30}
-                    step={1}
-                />
-            </div>
-            {/* TODO: Añadir más parámetros según el tipo de puzzle */}
-        </CollapsibleCard>
-    )
-}
-
-function LaserParamsSection({ state }: { state: ReturnType<typeof usePuzzleState> }) {
-    return (
-        <CollapsibleCard
-            title="Parámetros de Corte Láser"
-            open={state.showLaserParams}
-            onOpenChange={state.setShowLaserParams}
-        >
-            <div className="space-y-2">
-                <div className="flex justify-between">
-                    <Label>Tamaño de celda</Label>
-                    <span className="text-sm font-medium">{state.cellSize}mm</span>
-                </div>
-                <Slider
-                    value={[state.cellSize]}
-                    onValueChange={([v]) => state.setCellSize(v)}
-                    min={5}
-                    max={20}
-                    step={0.5}
-                />
-            </div>
-            <div className="space-y-2">
-                <div className="flex justify-between">
-                    <Label>Radio de esquinas</Label>
-                    <span className="text-sm font-medium">{state.cornerRadius}mm</span>
-                </div>
-                <Slider
-                    value={[state.cornerRadius]}
-                    onValueChange={([v]) => state.setCornerRadius(v)}
-                    min={0}
-                    max={5}
-                    step={0.1}
-                />
-            </div>
-            <div className="space-y-2">
-                <div className="flex justify-between">
-                    <Label>Grosor de línea</Label>
-                    <span className="text-sm font-medium">{state.strokeWidth}mm</span>
-                </div>
-                <Slider
-                    value={[state.strokeWidth]}
-                    onValueChange={([v]) => state.setStrokeWidth(v)}
-                    min={0.1}
-                    max={1}
-                    step={0.05}
-                />
-            </div>
-        </CollapsibleCard>
-    )
-}
-
-//
-
-function ActionButtons({ regenerate, downloadSVG }: { regenerate: () => void; downloadSVG: () => void }) {
-    return (
-        <div className="flex gap-2">
-            <Button onClick={regenerate} variant="outline" className="flex-1">
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Regenerar
-            </Button>
-            <Button onClick={downloadSVG} className="flex-1">
-                <Download className="w-4 h-4 mr-2" />
-                Descargar SVG
-            </Button>
         </div>
     )
 }
