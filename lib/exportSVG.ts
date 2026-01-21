@@ -1,3 +1,4 @@
+import { STROKE_WIDTH, STROKE_COLOR } from "@/lib/constants"
 import { generateAngles } from "@/lib/generateAngles"
 import { generateRings } from "@/lib/generateRings"
 import { generateSeeds } from "@/lib/generateSeeds"
@@ -239,8 +240,8 @@ export function exportSVG(params: ExportSVGParams) {
                     }
                 }
                 const tabPath = `M ${sStart.x} ${sStart.y} L ${sLeft.x} ${sLeft.y} L ${sRight.x} ${sRight.y} L ${sEnd.x} ${sEnd.y}`
-                if (d) svg += `<path d=\"${d.trim()}\" fill=\"none\" stroke=\"#111\" stroke-width=\"0.15\"/>\n`
-                svg += `<path d=\"${tabPath}\" fill=\"none\" stroke=\"${highlightTabs ? "#f59e42" : "#111"}\" stroke-width=\"${highlightTabs ? 1.2 : 0.15}\"/>\n`
+                if (d) svg += `<path d=\"${d.trim()}\" fill=\"none\" stroke=\"${STROKE_COLOR}\" stroke-width=\"${STROKE_WIDTH}\"/>\n`
+                svg += `<path d=\"${tabPath}\" fill=\"none\" stroke=\"${highlightTabs ? "#f59e42" : STROKE_COLOR}\" stroke-width=\"${highlightTabs ? 1.2 : STROKE_WIDTH}\"/>\n`
                 return
             }
         }
@@ -253,7 +254,7 @@ export function exportSVG(params: ExportSVGParams) {
                     .map(([x, y]) => `L ${x} ${y}`)
                     .join(" ")
                 : ""
-        svg += `<path d=\"${d.trim()}\" fill=\"none\" stroke=\"#111\" stroke-width=\"0.15\"/>\n`
+        svg += `<path d=\"${d.trim()}\" fill=\"none\" stroke=\"${STROKE_COLOR}\" stroke-width=\"${STROKE_WIDTH}\"/>\n`
     })
     // --- Extra cuts
     extraCuts.forEach(({ cut }, idx) => {
@@ -326,8 +327,8 @@ export function exportSVG(params: ExportSVGParams) {
                 }
             }
             const tabPath = `M ${sStart.x} ${sStart.y} L ${sLeft.x} ${sLeft.y} L ${sRight.x} ${sRight.y} L ${sEnd.x} ${sEnd.y}`
-            if (d) svg += `<path d=\"${d.trim()}\" fill=\"none\" stroke=\"#111\" stroke-width=\"0.15\"/>\n`
-            svg += `<path d=\"${tabPath}\" fill=\"none\" stroke=\"${highlightTabs ? "#f59e42" : "#111"}\" stroke-width=\"${highlightTabs ? 1.2 : 0.15}\"/>\n`
+            if (d) svg += `<path d=\"${d.trim()}\" fill=\"none\" stroke=\"${STROKE_COLOR}\" stroke-width=\"${STROKE_WIDTH}\"/>\n`
+            svg += `<path d=\"${tabPath}\" fill=\"none\" stroke=\"${highlightTabs ? "#f59e42" : STROKE_COLOR}\" stroke-width=\"${highlightTabs ? 1.2 : STROKE_WIDTH}\"/>\n`
         } else {
             const d =
                 edgePts.length > 0
@@ -337,7 +338,7 @@ export function exportSVG(params: ExportSVGParams) {
                         .map(([x, y]) => `L ${x} ${y}`)
                         .join(" ")
                     : ""
-            svg += `<path d=\"${d.trim()}\" fill=\"none\" stroke=\"#111\" stroke-width=\"0.15\" stroke-dasharray=\"3 2\"/>\n`
+            svg += `<path d=\"${d.trim()}\" fill=\"none\" stroke=\"${STROKE_COLOR}\" stroke-width=\"${STROKE_WIDTH}\" stroke-dasharray=\"3 2\"/>\n`
         }
     })
     svg += `</svg>`

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { STROKE_WIDTH } from "@/lib/constants"
+import { STROKE_WIDTH, STROKE_COLOR } from "@/lib/constants"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
@@ -356,7 +356,7 @@ export function PreviewCard({
                                                     <path
                                                         d={d.join(" ")}
                                                         fill="none"
-                                                        stroke="#111"
+                                                        stroke={STROKE_COLOR}
                                                         strokeWidth={STROKE_WIDTH}
                                                     />
                                                 )}
@@ -379,7 +379,7 @@ export function PreviewCard({
                                             .map(([x, y]) => `L ${x} ${y}`)
                                             .join(" ")
                                         : ""
-                                return <path key={idx} d={d} fill="none" stroke="#111" strokeWidth={0.15} />
+                                return <path key={idx} d={d} fill="none" stroke={STROKE_COLOR} strokeWidth={STROKE_WIDTH} />
                             })
                         })()}
                         {/* Líneas de corte tangenciales para piezas grandes */}
@@ -462,7 +462,7 @@ export function PreviewCard({
                                 return (
                                     <g key={"cut-" + idx}>
                                         {d.length > 0 && (
-                                            <path d={d.join(" ")} fill="none" stroke="#111" strokeWidth={STROKE_WIDTH} />
+                                            <path d={d.join(" ")} fill="none" stroke={STROKE_COLOR} strokeWidth={STROKE_WIDTH} />
                                         )}
                                         <path
                                             d={tabPath}
@@ -486,7 +486,7 @@ export function PreviewCard({
                                         key={"cut-" + idx}
                                         d={d}
                                         fill="none"
-                                        stroke="#111"
+                                        stroke={STROKE_COLOR}
                                         strokeWidth={STROKE_WIDTH}
                                         strokeDasharray="3 2"
                                     />
