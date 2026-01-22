@@ -117,7 +117,7 @@ export function PuzzleGenerator() {
     const previewScale = (400 / Math.max(state.gridWidth, state.gridHeight) / state.cellSize) * (state.zoom / 100)
 
     return (
-        <div className="h-screen flex flex-col max-w-6xl mx-auto p-4">
+        <div className="h-screen flex flex-col max-w-7xl mx-auto p-4">
             <div className="text-center space-y-2 pb-4">
                 <div className="flex items-center justify-center gap-3 relative">
                     <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
