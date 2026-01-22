@@ -1,13 +1,23 @@
 import { Point } from "./subdivideEdge"
 
-export type Tab = {
-    segmentIndex: number
-    startPoint: { x: number; y: number }
-    leftTipPoint: { x: number; y: number }
-    rightTipPoint: { x: number; y: number }
-    endPoint: { x: number; y: number }
-    isTooSmall?: boolean
-}
+export type Tab =
+    | {
+        segmentIndex: number
+        startPoint: { x: number; y: number }
+        leftTipPoint: { x: number; y: number }
+        rightTipPoint: { x: number; y: number }
+        endPoint: { x: number; y: number }
+        isTooSmall?: boolean
+        type: 'three-arm'
+    }
+    | {
+        segmentIndex: number
+        startPoint: { x: number; y: number }
+        tipPoint: { x: number; y: number }
+        endPoint: { x: number; y: number }
+        isTooSmall?: boolean
+        type: 'triangle'
+    }
 
 /**
  * Genera una pestaña centrada en el segmento [p0, p1] si es suficientemente largo
@@ -43,6 +53,9 @@ export function generateEdgeTab(
     const centerX = (p0[0] + p1[0]) / 2 + (dx / length) * offset
     const centerY = (p0[1] + p1[1]) / 2 + (dy / length) * offset
 
+    // Decide tab type: 80% three-arm, 20% triangle (deterministic)
+    const tabType = Math.abs(hash) % 5 === 0 ? 'triangle' : 'three-arm'
+
     // Vector perpendicular (normalizado)
     const perpX = -dy / length
     const perpY = dx / length
@@ -72,26 +85,45 @@ export function generateEdgeTab(
         x: centerX - (dx / length) * (baseWidth / 2) + offsetStartX,
         y: centerY - (dy / length) * (baseWidth / 2) + offsetStartY,
     }
-    const leftTipPoint = {
-        x: centerX - (dx / length) * (baseWidth / 2 - lateralOffset) + perpX * height,
-        y: centerY - (dy / length) * (baseWidth / 2 - lateralOffset) + perpY * height,
-    }
-    const rightTipPoint = {
-        x: centerX + (dx / length) * (baseWidth / 2 - lateralOffset) + perpX * height,
-        y: centerY + (dy / length) * (baseWidth / 2 - lateralOffset) + perpY * height,
-    }
     const endPoint = {
         x: centerX + (dx / length) * (baseWidth / 2) + offsetEndX,
         y: centerY + (dy / length) * (baseWidth / 2) + offsetEndY,
     }
     const tabActualSize = Math.min(baseWidth, Math.abs(height))
     const isTooSmall = tabActualSize < minTabSize
-    return {
-        segmentIndex: 0,
-        startPoint,
-        leftTipPoint,
-        rightTipPoint,
-        endPoint,
-        isTooSmall,
+
+    if (tabType === 'triangle') {
+        // Only one tip in the center (triangle tab)
+        const tipPoint = {
+            x: centerX + perpX * height,
+            y: centerY + perpY * height,
+        }
+        return {
+            segmentIndex: 0,
+            startPoint,
+            tipPoint,
+            endPoint,
+            isTooSmall,
+            type: 'triangle',
+        }
+    } else {
+        // Usual three-arm tab
+        const leftTipPoint = {
+            x: centerX - (dx / length) * (baseWidth / 2 - lateralOffset) + perpX * height,
+            y: centerY - (dy / length) * (baseWidth / 2 - lateralOffset) + perpY * height,
+        }
+        const rightTipPoint = {
+            x: centerX + (dx / length) * (baseWidth / 2 - lateralOffset) + perpX * height,
+            y: centerY + (dy / length) * (baseWidth / 2 - lateralOffset) + perpY * height,
+        }
+        return {
+            segmentIndex: 0,
+            startPoint,
+            leftTipPoint,
+            rightTipPoint,
+            endPoint,
+            isTooSmall,
+            type: 'three-arm',
+        }
     }
 }

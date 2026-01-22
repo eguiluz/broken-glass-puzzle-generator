@@ -226,9 +226,16 @@ export function exportSVG(params: ExportSVGParams) {
                     }
                 }
                 const sStart = scaleTabPoint(tab.startPoint)
-                const sLeft = scaleTabPoint(tab.leftTipPoint)
-                const sRight = scaleTabPoint(tab.rightTipPoint)
                 const sEnd = scaleTabPoint(tab.endPoint)
+                let tabPath = ""
+                if (tab.type === 'triangle') {
+                    const sTip = scaleTabPoint(tab.tipPoint)
+                    tabPath = `M ${sStart.x} ${sStart.y} L ${sTip.x} ${sTip.y} L ${sEnd.x} ${sEnd.y}`
+                } else {
+                    const sLeft = scaleTabPoint(tab.leftTipPoint)
+                    const sRight = scaleTabPoint(tab.rightTipPoint)
+                    tabPath = `M ${sStart.x} ${sStart.y} L ${sLeft.x} ${sLeft.y} L ${sRight.x} ${sRight.y} L ${sEnd.x} ${sEnd.y}`
+                }
                 const beforeTabScaled = beforeTabOrig.map((pt, i) =>
                     i === beforeTabOrig.length - 1 ? [sStart.x, sStart.y] : pt,
                 )
@@ -246,7 +253,6 @@ export function exportSVG(params: ExportSVGParams) {
                         d += ` L ${afterTabScaled[i][0]} ${afterTabScaled[i][1]}`
                     }
                 }
-                const tabPath = `M ${sStart.x} ${sStart.y} L ${sLeft.x} ${sLeft.y} L ${sRight.x} ${sRight.y} L ${sEnd.x} ${sEnd.y}`
                 if (d)
                     svg += `<path d=\"${d.trim()}\" fill=\"none\" stroke=\"${STROKE_COLOR}\" stroke-width=\"${STROKE_WIDTH}\"/>\n`
                 svg += `<path d=\"${tabPath}\" fill=\"none\" stroke=\"${highlightTabs ? "#f59e42" : STROKE_COLOR}\" stroke-width=\"${highlightTabs ? 1.2 : STROKE_WIDTH}\"/>\n`
@@ -257,10 +263,10 @@ export function exportSVG(params: ExportSVGParams) {
         const d =
             edgePts.length > 0
                 ? `M ${edgePts[0][0]} ${edgePts[0][1]} ` +
-                  edgePts
-                      .slice(1)
-                      .map(([x, y]) => `L ${x} ${y}`)
-                      .join(" ")
+                edgePts
+                    .slice(1)
+                    .map(([x, y]) => `L ${x} ${y}`)
+                    .join(" ")
                 : ""
         svg += `<path d=\"${d.trim()}\" fill=\"none\" stroke=\"${STROKE_COLOR}\" stroke-width=\"${STROKE_WIDTH}\"/>\n`
     })
@@ -314,9 +320,16 @@ export function exportSVG(params: ExportSVGParams) {
                 }
             }
             const sStart = scaleTabPoint(tab.startPoint)
-            const sLeft = scaleTabPoint(tab.leftTipPoint)
-            const sRight = scaleTabPoint(tab.rightTipPoint)
             const sEnd = scaleTabPoint(tab.endPoint)
+            let tabPath = ""
+            if (tab.type === 'triangle') {
+                const sTip = scaleTabPoint(tab.tipPoint)
+                tabPath = `M ${sStart.x} ${sStart.y} L ${sTip.x} ${sTip.y} L ${sEnd.x} ${sEnd.y}`
+            } else {
+                const sLeft = scaleTabPoint(tab.leftTipPoint)
+                const sRight = scaleTabPoint(tab.rightTipPoint)
+                tabPath = `M ${sStart.x} ${sStart.y} L ${sLeft.x} ${sLeft.y} L ${sRight.x} ${sRight.y} L ${sEnd.x} ${sEnd.y}`
+            }
             const beforeTabScaled = beforeTabOrig.map((pt, i) =>
                 i === beforeTabOrig.length - 1 ? [sStart.x, sStart.y] : pt,
             )
@@ -334,7 +347,6 @@ export function exportSVG(params: ExportSVGParams) {
                     d += ` L ${afterTabScaled[i][0]} ${afterTabScaled[i][1]}`
                 }
             }
-            const tabPath = `M ${sStart.x} ${sStart.y} L ${sLeft.x} ${sLeft.y} L ${sRight.x} ${sRight.y} L ${sEnd.x} ${sEnd.y}`
             if (d)
                 svg += `<path d=\"${d.trim()}\" fill=\"none\" stroke=\"${STROKE_COLOR}\" stroke-width=\"${STROKE_WIDTH}\"/>\n`
             svg += `<path d=\"${tabPath}\" fill=\"none\" stroke=\"${highlightTabs ? "#f59e42" : STROKE_COLOR}\" stroke-width=\"${highlightTabs ? 1.2 : STROKE_WIDTH}\"/>\n`
@@ -342,10 +354,10 @@ export function exportSVG(params: ExportSVGParams) {
             const d =
                 edgePts.length > 0
                     ? `M ${edgePts[0][0]} ${edgePts[0][1]} ` +
-                      edgePts
-                          .slice(1)
-                          .map(([x, y]) => `L ${x} ${y}`)
-                          .join(" ")
+                    edgePts
+                        .slice(1)
+                        .map(([x, y]) => `L ${x} ${y}`)
+                        .join(" ")
                     : ""
             svg += `<path d=\"${d.trim()}\" fill=\"none\" stroke=\"${STROKE_COLOR}\" stroke-width=\"${STROKE_WIDTH}\" stroke-dasharray=\"3 2\"/>\n`
         }

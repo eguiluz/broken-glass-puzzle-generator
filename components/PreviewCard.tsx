@@ -332,9 +332,18 @@ export function PreviewCard({
                                             }
                                         }
                                         const sStart = scaleTabPoint(tab.startPoint)
-                                        const sLeft = scaleTabPoint(tab.leftTipPoint)
-                                        const sRight = scaleTabPoint(tab.rightTipPoint)
                                         const sEnd = scaleTabPoint(tab.endPoint)
+                                        let tabPath = ""
+                                        if (tab.type === 'triangle') {
+                                            // Two-arm triangle tab
+                                            const sTip = scaleTabPoint(tab.tipPoint)
+                                            tabPath = `M ${sStart.x} ${sStart.y} L ${sTip.x} ${sTip.y} L ${sEnd.x} ${sEnd.y}`
+                                        } else {
+                                            // Classic three-arm tab
+                                            const sLeft = scaleTabPoint(tab.leftTipPoint)
+                                            const sRight = scaleTabPoint(tab.rightTipPoint)
+                                            tabPath = `M ${sStart.x} ${sStart.y} L ${sLeft.x} ${sLeft.y} L ${sRight.x} ${sRight.y} L ${sEnd.x} ${sEnd.y}`
+                                        }
                                         const beforeTabScaled = beforeTabOrig.map((pt, i) =>
                                             i === beforeTabOrig.length - 1 ? [sStart.x, sStart.y] : pt,
                                         )
@@ -354,7 +363,6 @@ export function PreviewCard({
                                                 d.push(`L ${afterTabScaled[i][0]} ${afterTabScaled[i][1]}`)
                                             }
                                         }
-                                        const tabPath = `M ${sStart.x} ${sStart.y} L ${sLeft.x} ${sLeft.y} L ${sRight.x} ${sRight.y} L ${sEnd.x} ${sEnd.y}`
                                         return (
                                             <g key={idx}>
                                                 {d.length > 0 && (
@@ -451,9 +459,16 @@ export function PreviewCard({
                                     }
                                 }
                                 const sStart = scaleTabPoint(tab.startPoint)
-                                const sLeft = scaleTabPoint(tab.leftTipPoint)
-                                const sRight = scaleTabPoint(tab.rightTipPoint)
                                 const sEnd = scaleTabPoint(tab.endPoint)
+                                let tabPath = ""
+                                if (tab.type === 'triangle') {
+                                    const sTip = scaleTabPoint(tab.tipPoint)
+                                    tabPath = `M ${sStart.x} ${sStart.y} L ${sTip.x} ${sTip.y} L ${sEnd.x} ${sEnd.y}`
+                                } else {
+                                    const sLeft = scaleTabPoint(tab.leftTipPoint)
+                                    const sRight = scaleTabPoint(tab.rightTipPoint)
+                                    tabPath = `M ${sStart.x} ${sStart.y} L ${sLeft.x} ${sLeft.y} L ${sRight.x} ${sRight.y} L ${sEnd.x} ${sEnd.y}`
+                                }
                                 const beforeTabScaled = beforeTabOrig.map((pt, i) =>
                                     i === beforeTabOrig.length - 1 ? [sStart.x, sStart.y] : pt,
                                 )
@@ -471,7 +486,6 @@ export function PreviewCard({
                                         d.push(`L ${afterTabScaled[i][0]} ${afterTabScaled[i][1]}`)
                                     }
                                 }
-                                const tabPath = `M ${sStart.x} ${sStart.y} L ${sLeft.x} ${sLeft.y} L ${sRight.x} ${sRight.y} L ${sEnd.x} ${sEnd.y}`
                                 return (
                                     <g key={"cut-" + idx}>
                                         {d.length > 0 && (
