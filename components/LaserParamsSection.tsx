@@ -29,19 +29,6 @@ export function LaserParamsSection({ state }: LaserParamsSectionProps) {
             </div>
             <div className="space-y-2">
                 <div className="flex justify-between">
-                    <Label>Radio de esquinas</Label>
-                    <span className="text-sm font-medium">{state.cornerRadius}mm</span>
-                </div>
-                <Slider
-                    value={[state.cornerRadius]}
-                    onValueChange={([v]) => state.setCornerRadius(v)}
-                    min={0}
-                    max={5}
-                    step={0.1}
-                />
-            </div>
-            <div className="space-y-2">
-                <div className="flex justify-between">
                     <Label>Grosor de línea</Label>
                     <span className="text-sm font-medium">{state.strokeWidth}mm</span>
                 </div>

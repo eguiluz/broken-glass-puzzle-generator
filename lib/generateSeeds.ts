@@ -13,7 +13,6 @@ export interface GenerateSeedsOptions {
     jitterAngle?: number // máximo desplazamiento angular (radianes)
 }
 
-
 // Cache global para los jitter de semillas
 const _seedJitterCache = new Map<string, { jitterR: number; jitterA: number }>()
 

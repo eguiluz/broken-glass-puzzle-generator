@@ -80,7 +80,6 @@ export function PreviewCard({
     const svgWidth = width * previewScale
     const svgHeight = height * previewScale
     // El borderRadius del SVG debe estar en px y escalar igual que el rx del rect
-    const svgBorderRadius = state.cornerRadius * previewScale
     // Parámetros para la generación radial (pueden hacerse configurables)
     const minRadius = Math.min(width, height) * minRadiusPct
     const maxRadius = Math.min(width, height) * 0.48
@@ -225,6 +224,7 @@ export function PreviewCard({
                         className="flex-1"
                     />
                 </div>
+                {/* El control de grosor de línea se gestiona desde el estado global */}
             </CardHeader>
             <CardContent className="flex-1 flex flex-col overflow-hidden">
                 <div className="flex-1 flex items-center justify-center bg-muted/30">
@@ -235,7 +235,6 @@ export function PreviewCard({
                         style={{
                             cursor: "crosshair",
                             background: "#fff",
-                            borderRadius: svgBorderRadius,
                             boxShadow: "0 0 0 1px #ccc",
                         }}
                         xmlns="http://www.w3.org/2000/svg"
@@ -250,7 +249,7 @@ export function PreviewCard({
                             fill="none"
                             stroke="#222"
                             strokeWidth={state.strokeWidth}
-                            rx={state.cornerRadius}
+                            rx={0}
                         />
                         {/* Aristas normales */}
                         {(() => {
@@ -357,14 +356,14 @@ export function PreviewCard({
                                                         d={d.join(" ")}
                                                         fill="none"
                                                         stroke={STROKE_COLOR}
-                                                        strokeWidth={STROKE_WIDTH}
+                                                        strokeWidth={state.strokeWidth}
                                                     />
                                                 )}
                                                 <path
                                                     d={tabPath}
                                                     fill="none"
                                                     stroke={highlightTabs ? "#f59e42" : "#111"}
-                                                    strokeWidth={highlightTabs ? 1.2 : STROKE_WIDTH}
+                                                    strokeWidth={highlightTabs ? 1.2 : state.strokeWidth}
                                                 />
                                             </g>
                                         )
@@ -374,12 +373,20 @@ export function PreviewCard({
                                 const d =
                                     edgePts.length > 0
                                         ? `M ${edgePts[0][0]} ${edgePts[0][1]} ` +
-                                        edgePts
-                                            .slice(1)
-                                            .map(([x, y]) => `L ${x} ${y}`)
-                                            .join(" ")
+                                          edgePts
+                                              .slice(1)
+                                              .map(([x, y]) => `L ${x} ${y}`)
+                                              .join(" ")
                                         : ""
-                                return <path key={idx} d={d} fill="none" stroke={STROKE_COLOR} strokeWidth={STROKE_WIDTH} />
+                                return (
+                                    <path
+                                        key={idx}
+                                        d={d}
+                                        fill="none"
+                                        stroke={STROKE_COLOR}
+                                        strokeWidth={state.strokeWidth}
+                                    />
+                                )
                             })
                         })()}
                         {/* Líneas de corte tangenciales para piezas grandes */}
@@ -462,13 +469,18 @@ export function PreviewCard({
                                 return (
                                     <g key={"cut-" + idx}>
                                         {d.length > 0 && (
-                                            <path d={d.join(" ")} fill="none" stroke={STROKE_COLOR} strokeWidth={STROKE_WIDTH} />
+                                            <path
+                                                d={d.join(" ")}
+                                                fill="none"
+                                                stroke={STROKE_COLOR}
+                                                strokeWidth={state.strokeWidth}
+                                            />
                                         )}
                                         <path
                                             d={tabPath}
                                             fill="none"
                                             stroke={highlightTabs ? "#f59e42" : "#111"}
-                                            strokeWidth={highlightTabs ? 1.2 : STROKE_WIDTH}
+                                            strokeWidth={highlightTabs ? 1.2 : state.strokeWidth}
                                         />
                                     </g>
                                 )
@@ -476,10 +488,10 @@ export function PreviewCard({
                                 const d =
                                     edgePts.length > 0
                                         ? `M ${edgePts[0][0]} ${edgePts[0][1]} ` +
-                                        edgePts
-                                            .slice(1)
-                                            .map(([x, y]) => `L ${x} ${y}`)
-                                            .join(" ")
+                                          edgePts
+                                              .slice(1)
+                                              .map(([x, y]) => `L ${x} ${y}`)
+                                              .join(" ")
                                         : ""
                                 return (
                                     <path
@@ -487,7 +499,7 @@ export function PreviewCard({
                                         d={d}
                                         fill="none"
                                         stroke={STROKE_COLOR}
-                                        strokeWidth={STROKE_WIDTH}
+                                        strokeWidth={state.strokeWidth}
                                         strokeDasharray="3 2"
                                     />
                                 )

@@ -26,6 +26,7 @@ import { PreviewCard } from "@/components/PreviewCard"
 import { RadialSegmentationSection } from "@/components/RadialSegmentationSection"
 import { EdgeNoiseSection } from "@/components/EdgeNoiseSection"
 import { TabsSection } from "@/components/TabsSection"
+import { STROKE_WIDTH } from "@/lib/constants"
 
 /**
  * Componente principal del generador de puzzles efecto cristal roto
@@ -58,6 +59,9 @@ export function PuzzleGenerator() {
     const [edgeSegments, setEdgeSegments] = React.useState(8)
     const [edgeAmplitude, setEdgeAmplitude] = React.useState(3)
     const [edgeFrequency, setEdgeFrequency] = React.useState(0.05)
+
+    // Control de grosor de línea
+    const [strokeWidth, setStrokeWidth] = React.useState(STROKE_WIDTH)
 
     // Generar las piezas del puzzle
     const pieces = usePuzzleGenerator({

@@ -15,11 +15,10 @@ export function usePuzzleState() {
 
     // Parámetros de corte láser
     const [cellSize, setCellSize] = useState(10)
-    const [cornerRadius, setCornerRadius] = useState(1.5)
     const [strokeWidth, setStrokeWidth] = useState(0.2)
 
     // Vista previa
-    const [zoom, setZoom] = useState(150)
+    const [zoom, setZoom] = useState(190)
     const [showDetails, setShowDetails] = useState(false)
 
     // Estados de secciones colapsables
@@ -46,8 +45,6 @@ export function usePuzzleState() {
         // Parámetros de corte láser
         cellSize,
         setCellSize,
-        cornerRadius,
-        setCornerRadius,
         strokeWidth,
         setStrokeWidth,
 
