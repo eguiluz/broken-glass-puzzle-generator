@@ -172,12 +172,19 @@ export function exportSVG(params: ExportSVGParams) {
         }
     })
     edgesToDraw.forEach(({ p0, p1 }, idx) => {
+        // Igualar la lógica de PreviewCard.tsx
         const isBorderEdge =
-            (Math.abs(p0[0]) < 1e-6 && Math.abs(p1[0]) < 1e-6) ||
-            (Math.abs(p0[1]) < 1e-6 && Math.abs(p1[1]) < 1e-6) ||
-            (Math.abs(p0[0] - width) < 1e-6 && Math.abs(p1[0] - width) < 1e-6) ||
-            (Math.abs(p0[1] - height) < 1e-6 && Math.abs(p1[1] - height) < 1e-6)
-        const edgePts = getPerturbedEdge(p0, p1, edgeSegments, noiseEnabled ? edgeAmplitude : 0, edgeFrequency)
+            (Math.abs(p0[0]) < 1e-6 && Math.abs(p1[0]) < 1e-6) || // borde izquierdo
+            (Math.abs(p0[1]) < 1e-6 && Math.abs(p1[1]) < 1e-6) || // borde superior
+            (Math.abs(p0[0] - width) < 1e-6 && Math.abs(p1[0] - width) < 1e-6) || // borde derecho
+            (Math.abs(p0[1] - height) < 1e-6 && Math.abs(p1[1] - height) < 1e-6) // borde inferior
+        const edgePts = getPerturbedEdge(
+            p0,
+            p1,
+            edgeSegments,
+            isBorderEdge ? 0 : edgeAmplitude * state.cellSize * 0.1,
+            edgeFrequency,
+        )
         if (!isBorderEdge) {
             const tabConnectionOffset = getTabConnectionOffset(edgePts[0], edgePts[edgePts.length - 1], idx)
             const tab = generateEdgeTab(
