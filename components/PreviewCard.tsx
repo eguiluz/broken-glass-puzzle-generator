@@ -379,10 +379,10 @@ export function PreviewCard({
                                 const d =
                                     edgePts.length > 0
                                         ? `M ${edgePts[0][0]} ${edgePts[0][1]} ` +
-                                          edgePts
-                                              .slice(1)
-                                              .map(([x, y]) => `L ${x} ${y}`)
-                                              .join(" ")
+                                        edgePts
+                                            .slice(1)
+                                            .map(([x, y]) => `L ${x} ${y}`)
+                                            .join(" ")
                                         : ""
                                 return (
                                     <path
@@ -494,10 +494,10 @@ export function PreviewCard({
                                 const d =
                                     edgePts.length > 0
                                         ? `M ${edgePts[0][0]} ${edgePts[0][1]} ` +
-                                          edgePts
-                                              .slice(1)
-                                              .map(([x, y]) => `L ${x} ${y}`)
-                                              .join(" ")
+                                        edgePts
+                                            .slice(1)
+                                            .map(([x, y]) => `L ${x} ${y}`)
+                                            .join(" ")
                                         : ""
                                 return (
                                     <path
@@ -530,7 +530,9 @@ export function PreviewCard({
                                     edgeSet.add(key)
                                 }
                             })
-                            return `${edgeSet.size} aristas | ${width}mm x ${height}mm`
+                            // Excluir las celdas del primer anillo (borde)
+                            const numPiezas = voronoiCells.length - firstRingSeedIndices.length
+                            return `~ ${numPiezas} piezas | ${width}mm x ${height}mm`
                         })()}
                     </div>
                 </div>
