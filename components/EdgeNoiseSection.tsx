@@ -51,8 +51,8 @@ export function EdgeNoiseSection({
                     value={[edgeAmplitude]}
                     onValueChange={([v]) => setEdgeAmplitude(v)}
                     min={0}
-                    max={10}
-                    step={0.1}
+                    max={2}
+                    step={0.01}
                 />
             </div>
             <div className="space-y-2">

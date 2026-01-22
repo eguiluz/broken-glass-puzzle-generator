@@ -34,7 +34,7 @@ import { STROKE_WIDTH } from "@/lib/constants"
  */
 export function PuzzleGenerator() {
     // Parámetros de pestañas (configurables)
-    const [minTabSize, setMinTabSize] = React.useState(1.3)
+    const [minTabSize, setMinTabSize] = React.useState(1)
     const [tabWidth, setTabWidth] = React.useState(0.35)
     const [tabHeight, setTabHeight] = React.useState(0.15)
     const [tabAngle, setTabAngle] = React.useState(-30)
@@ -43,7 +43,7 @@ export function PuzzleGenerator() {
     // Toggle para marcar visualmente las pestañas
     const [highlightTabs, setHighlightTabs] = React.useState(false)
     // ...
-    const [noiseEnabled, setNoiseEnabled] = React.useState(false)
+    const [noiseEnabled, setNoiseEnabled] = React.useState(true)
     const state = usePuzzleState()
 
     // Parámetros configurables para la segmentación radial
@@ -56,8 +56,8 @@ export function PuzzleGenerator() {
     const [jitterAngle, setJitterAngle] = React.useState(Math.PI / 16)
     const [biasScalar, setBiasScalar] = React.useState(1.4)
     // Parámetros de ruido para bordes
-    const [edgeSegments, setEdgeSegments] = React.useState(8)
-    const [edgeAmplitude, setEdgeAmplitude] = React.useState(3)
+    const [edgeSegments, setEdgeSegments] = React.useState(15)
+    const [edgeAmplitude, setEdgeAmplitude] = React.useState(0.5)
     const [edgeFrequency, setEdgeFrequency] = React.useState(0.05)
 
     // Control de grosor de línea

@@ -278,7 +278,13 @@ export function PreviewCard({
                                     (Math.abs(p0[1]) < 1e-6 && Math.abs(p1[1]) < 1e-6) || // borde superior
                                     (Math.abs(p0[0] - width) < 1e-6 && Math.abs(p1[0] - width) < 1e-6) || // borde derecho
                                     (Math.abs(p0[1] - height) < 1e-6 && Math.abs(p1[1] - height) < 1e-6) // borde inferior
-                                const edgePts = getPerturbedEdge(p0, p1, edgeSegments, edgeAmplitude, edgeFrequency)
+                                const edgePts = getPerturbedEdge(
+                                    p0,
+                                    p1,
+                                    edgeSegments,
+                                    isBorderEdge ? 0 : edgeAmplitude * state.cellSize * 0.1,
+                                    edgeFrequency,
+                                )
                                 // No dibujar pestañas en los bordes exteriores
                                 if (!isBorderEdge) {
                                     const tabConnectionOffset = getTabConnectionOffset(
@@ -397,7 +403,7 @@ export function PreviewCard({
                                 [x0, y0],
                                 [x1, y1],
                                 edgeSegments,
-                                edgeAmplitude,
+                                edgeAmplitude * state.cellSize * 0.3,
                                 edgeFrequency,
                             )
                             const tabConnectionOffset = getTabConnectionOffset(
