@@ -131,11 +131,14 @@ export function generateEdgeTab(
             x: startPoint.x + (endPoint.x - startPoint.x) * t2,
             y: startPoint.y + (endPoint.y - startPoint.y) * t2,
         }
-        // Offset only mid1 perpendicularly
-        const zOffset = height * 0.8
+        // Randomly mirror the Z tab in both axes (deterministic)
+        const mirrorMain = Math.abs(hash) % 2 === 0 ? 1 : -1
+        const mirrorPerp = Math.abs(Math.floor(hash / 2)) % 2 === 0 ? 1 : -1
+        // Offset only mid1 perpendicularly, possibly mirrored
+        const zOffset = height * 0.8 * mirrorMain
         const zMid1 = {
-            x: mid1.x + perpX * zOffset,
-            y: mid1.y + perpY * zOffset,
+            x: mid1.x + perpX * zOffset * mirrorPerp,
+            y: mid1.y + perpY * zOffset * mirrorPerp,
         }
         // mid2 stays on the edge
         return {
