@@ -26,6 +26,8 @@ interface ExportSVGParams {
     tabPositionJitter: number
     highlightTabs: boolean
     noiseEnabled: boolean
+    zTabStretch?: number // Optional, controls Z-tab stretch factor
+    zTabStretchY?: number // Optional, controls Z-tab perpendicular stretch
 }
 
 export function exportSVG(params: ExportSVGParams) {
@@ -48,6 +50,8 @@ export function exportSVG(params: ExportSVGParams) {
         tabPositionJitter,
         highlightTabs,
         noiseEnabled,
+        zTabStretch = 1.3,
+        zTabStretchY = 1.0,
     } = params
 
     const width = state.gridWidth * state.cellSize
@@ -228,9 +232,13 @@ export function exportSVG(params: ExportSVGParams) {
                 const sStart = scaleTabPoint(tab.startPoint)
                 const sEnd = scaleTabPoint(tab.endPoint)
                 let tabPath = ""
-                if (tab.type === 'triangle') {
+                if (tab.type === "triangle") {
                     const sTip = scaleTabPoint(tab.tipPoint)
                     tabPath = `M ${sStart.x} ${sStart.y} L ${sTip.x} ${sTip.y} L ${sEnd.x} ${sEnd.y}`
+                } else if (tab.type === "z-shape") {
+                    const sZ1 = scaleTabPoint(tab.zMid1)
+                    const sZ2 = scaleTabPoint(tab.zMid2)
+                    tabPath = `M ${sStart.x} ${sStart.y} L ${sZ1.x} ${sZ1.y} L ${sZ2.x} ${sZ2.y} L ${sEnd.x} ${sEnd.y}`
                 } else {
                     const sLeft = scaleTabPoint(tab.leftTipPoint)
                     const sRight = scaleTabPoint(tab.rightTipPoint)
@@ -263,10 +271,10 @@ export function exportSVG(params: ExportSVGParams) {
         const d =
             edgePts.length > 0
                 ? `M ${edgePts[0][0]} ${edgePts[0][1]} ` +
-                edgePts
-                    .slice(1)
-                    .map(([x, y]) => `L ${x} ${y}`)
-                    .join(" ")
+                  edgePts
+                      .slice(1)
+                      .map(([x, y]) => `L ${x} ${y}`)
+                      .join(" ")
                 : ""
         svg += `<path d=\"${d.trim()}\" fill=\"none\" stroke=\"${STROKE_COLOR}\" stroke-width=\"${STROKE_WIDTH}\"/>\n`
     })
@@ -322,10 +330,34 @@ export function exportSVG(params: ExportSVGParams) {
             const sStart = scaleTabPoint(tab.startPoint)
             const sEnd = scaleTabPoint(tab.endPoint)
             let tabPath = ""
-            if (tab.type === 'triangle') {
+            if (tab.type === "triangle") {
                 const sTip = scaleTabPoint(tab.tipPoint)
                 tabPath = `M ${sStart.x} ${sStart.y} L ${sTip.x} ${sTip.y} L ${sEnd.x} ${sEnd.y}`
-            } else {
+            } else if (tab.type === "z-shape") {
+                // Stretch Z-shape by increasing the distance of zMid1 and zMid2 from the center
+                function stretchZPoint(pt: { x: number; y: number }) {
+                    if (!tab) return pt
+                    const cx = (tab.startPoint.x + tab.endPoint.x) / 2
+                    const cy = (tab.startPoint.y + tab.endPoint.y) / 2
+                    const dx = tab.endPoint.x - tab.startPoint.x
+                    const dy = tab.endPoint.y - tab.startPoint.y
+                    const len = Math.hypot(dx, dy) || 1
+                    const nx = dx / len
+                    const ny = dy / len
+                    const px = -ny
+                    const py = nx
+                    const vx = pt.x - cx
+                    const vy = pt.y - cy
+                    const along = vx * nx + vy * ny
+                    const perp = vx * px + vy * py
+                    const sx = cx + nx * along * zTabStretch + px * perp * zTabStretchY
+                    const sy = cy + ny * along * zTabStretch + py * perp * zTabStretchY
+                    return { x: sx, y: sy }
+                }
+                const sZ1 = stretchZPoint(scaleTabPoint(tab.zMid1))
+                const sZ2 = stretchZPoint(scaleTabPoint(tab.zMid2))
+                tabPath = `M ${sStart.x} ${sStart.y} L ${sZ1.x} ${sZ1.y} L ${sZ2.x} ${sZ2.y} L ${sEnd.x} ${sEnd.y}`
+            } else if (tab.type === "three-arm") {
                 const sLeft = scaleTabPoint(tab.leftTipPoint)
                 const sRight = scaleTabPoint(tab.rightTipPoint)
                 tabPath = `M ${sStart.x} ${sStart.y} L ${sLeft.x} ${sLeft.y} L ${sRight.x} ${sRight.y} L ${sEnd.x} ${sEnd.y}`
@@ -354,10 +386,10 @@ export function exportSVG(params: ExportSVGParams) {
             const d =
                 edgePts.length > 0
                     ? `M ${edgePts[0][0]} ${edgePts[0][1]} ` +
-                    edgePts
-                        .slice(1)
-                        .map(([x, y]) => `L ${x} ${y}`)
-                        .join(" ")
+                      edgePts
+                          .slice(1)
+                          .map(([x, y]) => `L ${x} ${y}`)
+                          .join(" ")
                     : ""
             svg += `<path d=\"${d.trim()}\" fill=\"none\" stroke=\"${STROKE_COLOR}\" stroke-width=\"${STROKE_WIDTH}\" stroke-dasharray=\"3 2\"/>\n`
         }

@@ -96,6 +96,8 @@ export function PuzzleGenerator() {
             tabPositionJitter,
             highlightTabs,
             noiseEnabled,
+            zTabStretch: state.zTabStretch,
+            zTabStretchY: state.zTabStretchY,
         })
     }, [
         state,
@@ -183,6 +185,10 @@ export function PuzzleGenerator() {
                         setTabAngle={setTabAngle}
                         tabPositionJitter={tabPositionJitter}
                         setTabPositionJitter={setTabPositionJitter}
+                        zTabStretch={state.zTabStretch}
+                        setZTabStretch={state.setZTabStretch}
+                        zTabStretchY={state.zTabStretchY}
+                        setZTabStretchY={state.setZTabStretchY}
                     />
                     <ActionButtons regenerate={regenerate} downloadSVG={downloadSVG} />
                 </div>
@@ -207,6 +213,8 @@ export function PuzzleGenerator() {
                     tabAngle={tabAngle}
                     tabPositionJitter={tabPositionJitter}
                     highlightTabs={highlightTabs}
+                    zTabStretch={state.zTabStretch}
+                    zTabStretchY={state.zTabStretchY}
                 />
             </div>
         </div>

@@ -8,7 +8,7 @@ export type Tab =
         rightTipPoint: { x: number; y: number }
         endPoint: { x: number; y: number }
         isTooSmall?: boolean
-        type: 'three-arm'
+        type: "three-arm"
     }
     | {
         segmentIndex: number
@@ -16,7 +16,16 @@ export type Tab =
         tipPoint: { x: number; y: number }
         endPoint: { x: number; y: number }
         isTooSmall?: boolean
-        type: 'triangle'
+        type: "triangle"
+    }
+    | {
+        segmentIndex: number
+        startPoint: { x: number; y: number }
+        zMid1: { x: number; y: number }
+        zMid2: { x: number; y: number }
+        endPoint: { x: number; y: number }
+        isTooSmall?: boolean
+        type: "z-shape"
     }
 
 /**
@@ -53,8 +62,11 @@ export function generateEdgeTab(
     const centerX = (p0[0] + p1[0]) / 2 + (dx / length) * offset
     const centerY = (p0[1] + p1[1]) / 2 + (dy / length) * offset
 
-    // Decide tab type: 80% three-arm, 20% triangle (deterministic)
-    const tabType = Math.abs(hash) % 5 === 0 ? 'triangle' : 'three-arm'
+    // Decide tab type: 1/3 z-shape, 1/6 triangle, rest three-arm (deterministic)
+    let tabType: "three-arm" | "triangle" | "z-shape"
+    if (Math.abs(hash) % 3 === 0) tabType = "z-shape"
+    else if (Math.abs(hash) % 6 === 1) tabType = "triangle"
+    else tabType = "three-arm"
 
     // Vector perpendicular (normalizado)
     const perpX = -dy / length
@@ -92,7 +104,7 @@ export function generateEdgeTab(
     const tabActualSize = Math.min(baseWidth, Math.abs(height))
     const isTooSmall = tabActualSize < minTabSize
 
-    if (tabType === 'triangle') {
+    if (tabType === "triangle") {
         // Only one tip in the center (triangle tab)
         const tipPoint = {
             x: centerX + perpX * height,
@@ -104,7 +116,36 @@ export function generateEdgeTab(
             tipPoint,
             endPoint,
             isTooSmall,
-            type: 'triangle',
+            type: "triangle",
+        }
+    } else if (tabType === "z-shape") {
+        // Z-shape: one midpoint offset, the other connects directly to the edge
+        const t1 = 1 / 3
+        const t2 = 2 / 3
+        // Points along the edge
+        const mid1 = {
+            x: startPoint.x + (endPoint.x - startPoint.x) * t1,
+            y: startPoint.y + (endPoint.y - startPoint.y) * t1,
+        }
+        const mid2 = {
+            x: startPoint.x + (endPoint.x - startPoint.x) * t2,
+            y: startPoint.y + (endPoint.y - startPoint.y) * t2,
+        }
+        // Offset only mid1 perpendicularly
+        const zOffset = height * 0.8
+        const zMid1 = {
+            x: mid1.x + perpX * zOffset,
+            y: mid1.y + perpY * zOffset,
+        }
+        // mid2 stays on the edge
+        return {
+            segmentIndex: 0,
+            startPoint,
+            zMid1,
+            zMid2: mid2,
+            endPoint,
+            isTooSmall,
+            type: "z-shape",
         }
     } else {
         // Usual three-arm tab
@@ -123,7 +164,7 @@ export function generateEdgeTab(
             rightTipPoint,
             endPoint,
             isTooSmall,
-            type: 'three-arm',
+            type: "three-arm",
         }
     }
 }

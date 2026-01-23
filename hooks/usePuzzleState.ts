@@ -5,6 +5,10 @@ import { useState } from "react"
  * Mantiene solo los parámetros esenciales de configuración
  */
 export function usePuzzleState() {
+    // Factor de estiramiento para pestañas en Z
+    const [zTabStretch, setZTabStretch] = useState(1.3)
+    // Factor de estiramiento para pestañas en Z
+    const [zTabStretchY, setZTabStretchY] = useState(1.3)
     // Punto de origen para radialidad
     const [originX, setOriginX] = useState<number | null>(null)
     const [originY, setOriginY] = useState<number | null>(null)
@@ -34,6 +38,10 @@ export function usePuzzleState() {
     const computedOriginY = originY === null ? height * 0.75 : originY
 
     return {
+        zTabStretch,
+        setZTabStretch,
+        zTabStretchY,
+        setZTabStretchY,
         // Parámetros del puzzle
         gridWidth,
         setGridWidth,

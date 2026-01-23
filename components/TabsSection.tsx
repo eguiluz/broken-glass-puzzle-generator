@@ -16,6 +16,10 @@ interface TabsSectionProps {
     setTabAngle: (v: number) => void
     tabPositionJitter: number
     setTabPositionJitter: (v: number) => void
+    zTabStretch: number
+    setZTabStretch: (v: number) => void
+    zTabStretchY: number
+    setZTabStretchY: (v: number) => void
 }
 
 export function TabsSection({
@@ -31,6 +35,10 @@ export function TabsSection({
     setTabAngle,
     tabPositionJitter,
     setTabPositionJitter,
+    zTabStretch,
+    setZTabStretch,
+    zTabStretchY,
+    setZTabStretchY,
 }: TabsSectionProps) {
     return (
         <CollapsibleCard title="Pestañas (tabs)" open={true} onOpenChange={() => {}}>
@@ -81,6 +89,24 @@ export function TabsSection({
                     onValueChange={([v]) => setTabPositionJitter(v)}
                     min={0}
                     max={1}
+                    step={0.01}
+                />
+            </div>
+            <div className="space-y-2">
+                <div className="flex justify-between">
+                    <Label>Estiramiento pestaña Z (eje principal): {zTabStretch.toFixed(2)}</Label>
+                </div>
+                <Slider value={[zTabStretch]} onValueChange={([v]) => setZTabStretch(v)} min={1} max={4} step={0.01} />
+            </div>
+            <div className="space-y-2">
+                <div className="flex justify-between">
+                    <Label>Estiramiento pestaña Z (eje perpendicular): {zTabStretchY.toFixed(2)}</Label>
+                </div>
+                <Slider
+                    value={[zTabStretchY]}
+                    onValueChange={([v]) => setZTabStretchY(v)}
+                    min={0.5}
+                    max={2}
                     step={0.01}
                 />
             </div>

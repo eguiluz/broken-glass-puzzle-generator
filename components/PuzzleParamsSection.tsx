@@ -40,7 +40,6 @@ export function PuzzleParamsSection({ state }: PuzzleParamsSectionProps) {
                     step={1}
                 />
             </div>
-            {/* TODO: Añadir más parámetros según el tipo de puzzle */}
         </CollapsibleCard>
     )
 }

@@ -33,6 +33,8 @@ interface PreviewCardProps {
     tabAngle: number
     tabPositionJitter: number
     highlightTabs: boolean
+    zTabStretch: number
+    zTabStretchY: number
 }
 
 export function PreviewCard({
@@ -55,6 +57,8 @@ export function PreviewCard({
     tabAngle,
     tabPositionJitter,
     highlightTabs,
+    zTabStretch,
+    zTabStretchY,
 }: PreviewCardProps) {
     // Parámetros de pestañas (pueden hacerse configurables)
     // Los parámetros de pestaña ahora vienen de props
@@ -334,10 +338,40 @@ export function PreviewCard({
                                         const sStart = scaleTabPoint(tab.startPoint)
                                         const sEnd = scaleTabPoint(tab.endPoint)
                                         let tabPath = ""
-                                        if (tab.type === 'triangle') {
+                                        if (tab.type === "triangle") {
                                             // Two-arm triangle tab
                                             const sTip = scaleTabPoint(tab.tipPoint)
                                             tabPath = `M ${sStart.x} ${sStart.y} L ${sTip.x} ${sTip.y} L ${sEnd.x} ${sEnd.y}`
+                                        } else if (tab.type === "z-shape") {
+                                            // Z-shape tab (con estiramiento configurable en ambos ejes)
+                                            function stretchZPoint(pt: { x: number; y: number }) {
+                                                if (!tab) return pt
+                                                const cx = (tab.startPoint.x + tab.endPoint.x) / 2
+                                                const cy = (tab.startPoint.y + tab.endPoint.y) / 2
+                                                // Vector de la pestaña
+                                                const dx = tab.endPoint.x - tab.startPoint.x
+                                                const dy = tab.endPoint.y - tab.startPoint.y
+                                                // Normalizado
+                                                const len = Math.hypot(dx, dy) || 1
+                                                const nx = dx / len
+                                                const ny = dy / len
+                                                // Eje perpendicular
+                                                const px = -ny
+                                                const py = nx
+                                                // Proyección de pt respecto al centro
+                                                const vx = pt.x - cx
+                                                const vy = pt.y - cy
+                                                // Proyección sobre eje principal y perpendicular
+                                                const along = vx * nx + vy * ny
+                                                const perp = vx * px + vy * py
+                                                // Escalar cada eje
+                                                const sx = cx + nx * along * zTabStretch + px * perp * zTabStretchY
+                                                const sy = cy + ny * along * zTabStretch + py * perp * zTabStretchY
+                                                return { x: sx, y: sy }
+                                            }
+                                            const sZ1 = stretchZPoint(scaleTabPoint(tab.zMid1))
+                                            const sZ2 = stretchZPoint(scaleTabPoint(tab.zMid2))
+                                            tabPath = `M ${sStart.x} ${sStart.y} L ${sZ1.x} ${sZ1.y} L ${sZ2.x} ${sZ2.y} L ${sEnd.x} ${sEnd.y}`
                                         } else {
                                             // Classic three-arm tab
                                             const sLeft = scaleTabPoint(tab.leftTipPoint)
@@ -387,10 +421,10 @@ export function PreviewCard({
                                 const d =
                                     edgePts.length > 0
                                         ? `M ${edgePts[0][0]} ${edgePts[0][1]} ` +
-                                        edgePts
-                                            .slice(1)
-                                            .map(([x, y]) => `L ${x} ${y}`)
-                                            .join(" ")
+                                          edgePts
+                                              .slice(1)
+                                              .map(([x, y]) => `L ${x} ${y}`)
+                                              .join(" ")
                                         : ""
                                 return (
                                     <path
@@ -461,10 +495,14 @@ export function PreviewCard({
                                 const sStart = scaleTabPoint(tab.startPoint)
                                 const sEnd = scaleTabPoint(tab.endPoint)
                                 let tabPath = ""
-                                if (tab.type === 'triangle') {
+                                if (tab.type === "triangle") {
                                     const sTip = scaleTabPoint(tab.tipPoint)
                                     tabPath = `M ${sStart.x} ${sStart.y} L ${sTip.x} ${sTip.y} L ${sEnd.x} ${sEnd.y}`
-                                } else {
+                                } else if (tab.type === "z-shape") {
+                                    const sZ1 = scaleTabPoint(tab.zMid1)
+                                    const sZ2 = scaleTabPoint(tab.zMid2)
+                                    tabPath = `M ${sStart.x} ${sStart.y} L ${sZ1.x} ${sZ1.y} L ${sZ2.x} ${sZ2.y} L ${sEnd.x} ${sEnd.y}`
+                                } else if (tab.type === "three-arm") {
                                     const sLeft = scaleTabPoint(tab.leftTipPoint)
                                     const sRight = scaleTabPoint(tab.rightTipPoint)
                                     tabPath = `M ${sStart.x} ${sStart.y} L ${sLeft.x} ${sLeft.y} L ${sRight.x} ${sRight.y} L ${sEnd.x} ${sEnd.y}`
@@ -508,10 +546,10 @@ export function PreviewCard({
                                 const d =
                                     edgePts.length > 0
                                         ? `M ${edgePts[0][0]} ${edgePts[0][1]} ` +
-                                        edgePts
-                                            .slice(1)
-                                            .map(([x, y]) => `L ${x} ${y}`)
-                                            .join(" ")
+                                          edgePts
+                                              .slice(1)
+                                              .map(([x, y]) => `L ${x} ${y}`)
+                                              .join(" ")
                                         : ""
                                 return (
                                     <path
